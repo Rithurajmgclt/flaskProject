@@ -12,10 +12,20 @@ condb=mysql.connector.connect(
 newcursor=condb.cursor(dictionary=True)
 
 app= Flask(__name__)
+app.run(debug=True)    
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    current_page= int(request.args.get('page'))-1
+    print(current_page)
+    sql="SELECT * FROM users_table order by user_id desc limit %s,2"
+    values=(current_page,)
+    newcursor.execute(sql,values)
+    details=newcursor.fetchall()
+    newcursor.execute("SELECT count(*) total_rec FROM maindb.users_table")
+    page=newcursor.fetchone()
+    total_pages=int(page['total_rec']/2)  # no of items per page
+    return render_template("index.html",details=details,total_pages=total_pages)
 
 @app.route('/add_details',methods=['GET','POST'])
 def add_details():
@@ -44,4 +54,3 @@ def add_details():
 
 
 
-app.run(debug=True)    

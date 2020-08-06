@@ -1,13 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>index</title>
-
-</head>
-<body>
-    <a href="{{ url_for('add_details') }}"><button type="button">Add New</button></a>
+{% extends 'layout.html' %}
+{% block content %}
+<div class="row row-cols-2">
+    <div class="col">
+     <h1>Users</h1>
+    </div>
+    <div class="col"> 
+       <a href="{{ url_for('add_details') }}" class="btn btn-dark float-right" role="button">Create</a>
+    </div>
+</div>
     <table border="1">
         <tr>
             <th>id</th>
@@ -19,17 +19,26 @@
             <th>Address</th>
             <th>User role</th>
         </tr>
+        {% for i in details %}
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{i.user_id}}</td>
+            <td>{{i.firstname}}</td>
+            <td>{{i.lastname}}</td>
+            <td>{{i.age}}</td>
+            <td>{{i.email}}</td>
+            <td>{{i.phonenumber}}</td>
+            <td>{{i.address}}</td>
+            <td>{{i.userroles}}</td>
         </tr>
+        {% endfor %}
     </table>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% for n in range(total_pages) %}
+             <li class="page-item"><a class="page-link" href="?page={{n+1}}">{{n+1}}</a></li>
+            {% endfor %} 
     
-</body>
-</html>
+        </ul>
+      </nav>
+    {% endblock %}
