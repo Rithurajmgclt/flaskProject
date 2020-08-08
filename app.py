@@ -12,10 +12,35 @@ condb=mysql.connector.connect(
 newcursor=condb.cursor(dictionary=True)
 
 app= Flask(__name__)
-app.run(debug=True)    
+
+app.run(debug=True) 
+@app.route('/searchUser')
+def searchUser():
+    reslt_search=request.args.get('search')
+    values=reslt_search
+    sql=f" SELECT * from maindb.users_table where concat(firstname,lastname,email,phonenumber,address) like'%{values}%';"
+    newcursor.execute(sql)
+    searchResult=newcursor.fetchall()
+    
+    if request.args.get('page')!=None:
+
+        current_page= int(request.args.get('page'))-1
+    else:
+        current_page=0
+
+    sql="SELECT * FROM users_table order by user_id desc limit %s,2"
+    values = (current_page,)
+    newcursor.execute(sql,values)
+    details = newcursor.fetchall()
+    newcursor.execute("SELECT count(*) total_rec FROM maindb.users_table")
+    page = newcursor.fetchone()
+    total_pages=int(page['total_rec']/2)  # no of items per page
+    return render_template("search_user.html",total_pages=total_pages,current_page=current_page,searchResult=searchResult)  
 
 @app.route('/')
 def index():
+    
+    
     if request.args.get('page')!=None:
 
         current_page= int(request.args.get('page'))-1

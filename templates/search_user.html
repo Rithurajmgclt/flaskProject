@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="row row-cols-2">
+    <div class="col">
+     <h1>Users</h1>
+    </div>
+    <div class="col"> 
+       <a href="{{ url_for('add_details') }}" class="btn btn-dark float-right" role="button">Create</a>
+    </div>
+</div>
+
+
+  
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Age</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>Address</th>
+            <th>User role</th>
+        </tr>
+        {% for i in searchResult %}
+        <tr>
+            <td>{{i.user_id}}</td>
+            <td>{{i.firstname}}</td>
+            <td>{{i.lastname}}</td>
+            <td>{{i.age}}</td>
+            <td>{{i.email}}</td>
+            <td>{{i.phonenumber}}</td>
+            <td>{{i.address}}</td>
+            <td>{{i.userroles}}</td>
+        </tr>
+        
+        {% endfor %}
+    </table>
+    <form action="searchUser" methode='GET'>
+    <label for="search">Search Google:</label>
+    <input type="search" id="search" name="search">
+    <input type="submit">
+  </form>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% for n in range(total_pages) %}
+                {% if current_page == n%}
+                    <li class="page-item active"><a class="page-link" href="?page={{n+1}}">{{n+1}}</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{n+1}}">{{n+1}}</a></li>
+                {% endif %}
+            {% endfor %} 
+    
+        </ul>
+      </nav>
+    {% endblock %}
