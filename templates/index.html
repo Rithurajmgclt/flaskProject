@@ -22,7 +22,7 @@
             <th>Address</th>
             <th>User role</th>
         </tr>
-        {% for i in details %}
+        {% for i in users_list %}
         <tr>
             <td>{{i.user_id}}</td>
             <td>{{i.firstname}}</td>
@@ -38,7 +38,7 @@
     </table>
     <form  methode='GET'>
     <label for="search">Search Google:</label>
-    <input type="search" id="search" name="search">
+    <input type="text" id="search" name="search">
     <input type="submit">
   </form>
 

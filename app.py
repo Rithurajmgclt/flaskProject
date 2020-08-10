@@ -18,19 +18,14 @@ app.run(debug=True)
 
 @app.route('/',methods=['GET','POST'])
 def index():
-    global users_list
-    users_list=None
-    global total_pages
-    total_pages=None
-    global current_page
-    current_page=None
-
-    if "page" in request.args:
-        if request.args.get('page')!=None:
-            current_page= int(request.args.get('page'))-1
-        else:
-            current_page=0
+    if request.args.get('page')!=None:
+        current_page= int(request.args.get('page'))-1
+    else:
+        current_page=0
         
+
+    if "page" in request.args and "search" not in request.args :
+       
         sql="SELECT * FROM users_table order by user_id desc limit %s,2"
         values = (current_page,)
         newcursor.execute(sql,values)
@@ -38,23 +33,35 @@ def index():
         newcursor.execute("SELECT count(*) total_rec FROM maindb.users_table")
         page = newcursor.fetchone()
         total_pages=int(page['total_rec']/2)  # no of items per page    
-       
+        return render_template("index.html",users_list=users_list,total_pages=total_pages,current_page=current_page)   
         
+    elif "search" in request.args:
+    
+        reslt_search=request.args.get('search')
+        values=reslt_search
+        sql=f" SELECT * from maindb.users_table where concat(firstname,lastname,email,phonenumber,address) like '%{values}%';"
+        newcursor.execute(sql)
+        users_list = newcursor.fetchall()
+        
+        sql=f"SELECT count(*) as total_rec from  maindb.users_table where concat(firstname,lastname,email,phonenumber,address) like'%{values}%';"
+        newcursor.execute(sql)
+        page = newcursor.fetchone()
+        
+
+        total_pages=int(page['total_rec']/2)  # no of items per page    
+        return render_template("index.html",users_list=users_list,total_pages=total_pages,current_page=current_page)
     else:
-        def searchUser():
-            reslt_search=request.args.get('search')
-            values=reslt_search
-            sql=f" SELECT * from maindb.users_table where concat(firstname,lastname,email,phonenumber,address) like'%{values}%';"
-            newcursor.execute(sql)
-            users_list = newcursor.fetchall()
-            sql=f"SELECT count(*) as total_rec rom maindb.users_table where concat(firstname,lastname,email,phonenumber,address) like'%{values}%';"
-            newcursor.execute(sql)
-            page = newcursor.fetchone()
-            total_pages=int(page['total_rec']/2)  # no of items per page    
-       
-            
- 
-    return render_template("index.html",users_list=users_list,total_pages=total_pages,current_page=current_page)
+        sql = "SELECT * FROM users_table order by user_id desc limit %s,2"
+        values = (current_page,)
+        newcursor.execute(sql,values)
+        users_list = newcursor.fetchall()
+        newcursor.execute("SELECT count(*) total_rec FROM maindb.users_table")
+        page = newcursor.fetchone()
+        total_pages=int(page['total_rec']/2)  # no of items per page    
+        return render_template("index.html",users_list=users_list,total_pages=total_pages,current_page=current_page)   
+
+    
+    
 
 @app.route('/add_details',methods=['GET','POST'])
 def add_details():
