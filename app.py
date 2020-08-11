@@ -1,6 +1,7 @@
 from flask import Flask,render_template,url_for,request,redirect
 from markupsafe import escape
 import mysql.connector
+from models.userModel import UserModel
 
 condb=mysql.connector.connect(
     host='localhost',
@@ -18,13 +19,19 @@ app.run(debug=True)
 
 @app.route('/',methods=['GET','POST'])
 def index():
+    
     if request.args.get('page')!=None:
         current_page= int(request.args.get('page'))-1
     else:
         current_page=0
-        
+    
+    p=UserModel()  
+    j=p.index(current_page)  
+    print(j)
 
-    if "page" in request.args and "search" not in request.args :
+    # if search is none and empty this condition will execute
+    if request.args.get("search") == None or not request.args.get("search") :
+        print(" no ser")
        
         sql="SELECT * FROM users_table order by user_id desc limit %s,2"
         values = (current_page,)
@@ -35,21 +42,36 @@ def index():
         total_pages=int(page['total_rec']/2)  # no of items per page    
         return render_template("index.html",users_list=users_list,total_pages=total_pages,current_page=current_page)   
         
-    elif "search" in request.args:
+    elif request.args.get("search") != None:
+        print("ser")
+
+        if request.args.get('page')!=None:
+            current_page= int(request.args.get('page'))-1
+            print(f'currentpage{current_page}')
+        else:
+            current_page=0
+            print(f'currentpage{current_page}')
+        
     
         reslt_search=request.args.get('search')
         values=reslt_search
-        sql=f" SELECT * from maindb.users_table where concat(firstname,lastname,email,phonenumber,address) like '%{values}%';"
+        sql=f" SELECT * from maindb.users_table where concat(firstname,lastname,email,phonenumber,address) like '%{values}%' limit {current_page},2;"
         newcursor.execute(sql)
         users_list = newcursor.fetchall()
+       
+        
+
         
         sql=f"SELECT count(*) as total_rec from  maindb.users_table where concat(firstname,lastname,email,phonenumber,address) like'%{values}%';"
         newcursor.execute(sql)
         page = newcursor.fetchone()
         
+        
 
-        total_pages=int(page['total_rec']/2)  # no of items per page    
-        return render_template("index.html",users_list=users_list,total_pages=total_pages,current_page=current_page)
+        total_pages= int(page['total_rec']/2)  # no of items per page  
+     
+        return render_template("index.html",users_list=users_list,total_pages=total_pages,current_page=current_page,result_search=reslt_search)   
+
     else:
         sql = "SELECT * FROM users_table order by user_id desc limit %s,2"
         values = (current_page,)
@@ -81,5 +103,3 @@ def add_details():
         return redirect(url_for('index'))
 
     return render_template('submit.html')
-
-

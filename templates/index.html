@@ -38,17 +38,17 @@
     </table>
     <form  methode='GET'>
     <label for="search">Search Google:</label>
-    <input type="text" id="search" name="search">
+    <input type="text" id="search" value ="{{ result_search }}" name="search">
     <input type="submit">
   </form>
 
     <nav aria-label="Page navigation example">
         <ul class="pagination">
             {% for n in range(total_pages) %}
-                {% if current_page == n%}
-                    <li class="page-item active"><a class="page-link" href="?page={{n+1}}">{{n+1}}</a></li>
+                {% if current_page == n %}
+                    <li class="page-item active"><a class="page-link" href="?search={{result_search}}&page={{n+1}}">{{n+1}}</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="?page={{n+1}}">{{n+1}}</a></li>
+                    <li class="page-item"><a class="page-link" href="?search={{result_search}}&page={{n+1}}">{{n+1}}</a></li>
                 {% endif %}
             {% endfor %} 
     
