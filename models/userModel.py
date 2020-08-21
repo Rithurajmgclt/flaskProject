@@ -25,10 +25,10 @@ class UserModel():
                  "users_list": users_list  }
 
     def edituserdetails(self,id):
-        sql="SELECT *  FROM  maindb.users_table WHERE user_id='%s'"
+        sql="SELECT user_id,firstname,lastname,email,phonenumber,address,userroles  FROM  maindb.users_table WHERE user_id='%s'"
         values=(id,)
         newcursor.execute(sql,values)
         userEditdetails = newcursor.fetchone()
         return userEditdetails
     
-         
+    

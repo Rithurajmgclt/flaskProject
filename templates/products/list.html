@@ -1,0 +1,22 @@
+{% extends 'firsttview/layout.html' %}
+{% block content %}
+<div id='ajax'>
+
+</div>
+ 
+   
+{% endblock %} 
+{% block scripts %}
+
+<script type="text/javascript">
+    $(function() {
+    
+         $.getJSON($SCRIPT_ROOT + '/api/products', {
+          
+        }, function(data) {
+            console.log(data);
+            $('#ajax').text(JSON.stringify(data));
+        });
+    });
+  </script>
+  {% endblock %}

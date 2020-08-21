@@ -1,4 +1,4 @@
-{% extends 'layout.html' %}
+{% extends 'firstview/layout.html' %}
 {% block content %}
 <!-- Begin page content -->  
  {% if form %}
@@ -36,16 +36,18 @@
         <option value="Salesstaff" {% if form.userroles =="Salesstaff" %} selected{% endif %} >Salesstaff</option> 
       </select>
     </div>
-    <div class="form-group">
-        <label for="Password">Password</label>
-        <input type="password" value="{{form.password}}" min="5000" class="form-control" name="Password" placeholder="Enter password" aria-describedby="">
-    </div>
-    <div class="form-group">
-        <label for="Confirm Password">Confirm password</label>
-        <input type="password" min="5000" class="form-control"  placeholder="Re Enter password" aria-describedby="">
-    </div>
+    
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>  
-   
+   <form action="{{ url_for('editPassword',user_id=form.user_id) }}">
+    <div class="form-group">
+      <label for="Password">Password</label>
+      <input type="password" value="{{form.password}}" min="5000" class="form-control" name="Password" placeholder="Enter password" aria-describedby="">
+  </div>
+  <div class="form-group">
+      <label for="Confirm Password">Confirm password</label>
+      <input type="password" min="5000" class="form-control"  placeholder="Re Enter password" aria-describedby="">
+  </div>                                                                                                                                                                               
+   </form>
   {% endif %}
 {% endblock %} 

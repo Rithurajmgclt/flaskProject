@@ -1,25 +1,41 @@
-from flask import Flask,render_template,url_for,request,redirect
+from flask import Flask,render_template,url_for,request,redirect,session,jsonify,flash
 from markupsafe import escape
 import mysql.connector
 from models.userModel import UserModel
 from config.db import newcursor,condb
 import hashlib
 
+
+
 app= Flask(__name__)
 app.run(debug=True) 
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-@app.route('/',methods=['GET','POST'])
-def inex():
+
+@app.route('/login',methods=['GET','POST'])
+def login():
     
-    """
-    if request.methed == 'POST':
-        username = escape (request.form['Usernmae'])
-        inputPassword = escape (request.form['Password'])
-        password=hashlib.md5(inputPassword.encode())
-    """
+    
+    if request.method == 'POST':
+        username = escape (request.form['username'])
+        inputPassword = escape (request.form['password'])
+        password = hashlib.sha256( inputPassword.encode('utf-8')).hexdigest()
+        sql ="SELECT firstname,userroles FROM maindb.users_table WHERE email=%s AND password=%s ";
+        values = (username,password)
+        newcursor.execute(sql,values)
+        name = newcursor.fetchone()
+        if newcursor.rowcount > 0:
+            username=name['firstname']
+            userrole=name['userroles']
+        
+            session["username"] = username
+            session["userrole"] = userrole
+            flash("login succuss")
+            return redirect(url_for('dashboard'))
+        else:
+            flash("invalid usernmae or password")
 
-
-    return render_template("newlogin.html")
+    return render_template("firstview/login.html")
 
 
 @app.route('/users',methods=['GET','POST'])
@@ -35,7 +51,7 @@ def users():
     if request.args.get("search") == None or not request.args.get("search") :
         objectOne = UserModel()  
         searchNoneEmptyvalues = objectOne.emptySearch(current_page)  
-        return render_template("index.html",users_list = searchNoneEmptyvalues["users_list"],total_pages = searchNoneEmptyvalues["total_pages"],current_page = current_page)   
+        return render_template("users/index.html",users_list = searchNoneEmptyvalues["users_list"],total_pages = searchNoneEmptyvalues["total_pages"],current_page = current_page)   
         
     elif request.args.get("search") != None:
         if request.args.get('page')!= None:
@@ -45,7 +61,7 @@ def users():
         result_search = request.args.get('search')
         objectOne = UserModel()
         searchWithvalues = objectOne.withSearch(result_search, current_page)
-        return render_template("index.html",users_list = searchWithvalues["users_list"],total_pages = searchWithvalues["total_pages"],current_page = current_page,result_search = result_search) 
+        return render_template("firstview/index.html",users_list = searchWithvalues["users_list"],total_pages = searchWithvalues["total_pages"],current_page = current_page,result_search = result_search) 
 
 
 @app.route('/adddetails/',methods=['GET','POST'])
@@ -66,11 +82,17 @@ def addDetails():
         values=(firstname,lastname,age,email,phonenumber,address,userroles,password) 
         newcursor.execute(sql,values)
         condb.commit()
+        if newcursor.rowcount > 0:
+            message='Data added succussfuly'
+        else:
+            None
+        flash(message)        
+
 
         return redirect(url_for('users'))
     else:
 
-        return render_template('addUserdetails.html')
+        return render_template('users/addUserdetails.html')
 
 
 @app.route('/user/edit/<int:user_id>',methods = ['GET','POST'])
@@ -80,7 +102,7 @@ def editUser(user_id):
         id = user_id
         objectone = UserModel()
         form = objectone.edituserdetails(id)
-        return render_template("editUserdetail.html",form = form)
+        return render_template("users/editUserdetail.html",form = form)
     if request.method == 'POST':
         firstname = escape (request.form['FirstName'])
         lastname = escape(request.form['LastName'])
@@ -89,12 +111,12 @@ def editUser(user_id):
         phonenumber = escape(request.form['PhoneNumber'])
         address = escape(request.form['Address'])
         userroles = escape(request.form['UserRoles'])
-        password = escape(request.form['Password'])
         sql="UPDATE maindb.users_table SET firstname = %s,lastname = %s,age = %s, email = %s,phonenumber = %s,address = %s,userroles = %s,password = %s WHERE user_id = %s"  
         values=(firstname,lastname,age,email,phonenumber,address,userroles,password,user_id) 
         newcursor.execute(sql,values)
         condb.commit()
         return redirect(url_for('users'))
+        
 @app.route('/user/delete/<int:user_id>')
 def deleteUsers(user_id):
     id=user_id
@@ -103,6 +125,48 @@ def deleteUsers(user_id):
     newcursor.execute(sql,values)
     condb.commit()
     return redirect(url_for('users'))
+def logout():   
+    session.pop('username','userrole')
+    return redirect(url_for('index'))
+
+@app.route('/dashboard',methods=['GET','POST'])
+def dashboard():
+    
+    
+    return render_template('firstview/dashboard.html')
+
+@app.route('/api/products',methods=['GET','POST'])
+def api_products():
+    sql="SELECT id,products,prize,stock FROM maindb.products"
+    newcursor.execute(sql)
+    product_details=newcursor.fetchall()
+
+    return jsonify(product_details)
+
+@app.route('/products',methods=['GET','POST'])
+def products():
+    return render_template('products/list.html')    
+
+@app.route('/user/edit/password/<int:user_id>',methods = ['GET','POST'])
+def editPassword(user_id):
+    if request.method == 'POST':
+        id = user_id
+        objectone = UserModel()
+        inputPassword = escape (request.form['Password'])
+        password = hashlib.sha256( inputPassword.encode('utf-8')).hexdigest()
+        sql="UPDATE maindb.users_table SET password = %s WHERE user_id = %s"  
+        values=(password,user_id) 
+        newcursor.execute(sql,values)
+        condb.commit()
+        return redirect(url_for('users'))
+
+
+    return render_template("users/editUserdetail.html")
+@app.route('/billing',methods=['GET','POST'])
+def billing():
+    return 0
+
+
 
 
         

@@ -7,4 +7,5 @@ condb=mysql.connector.connect(
     database='maindb'
 )
 
-newcursor=condb.cursor(dictionary=True)
+newcursor=condb.cursor(dictionary=True, buffered=True)
+
