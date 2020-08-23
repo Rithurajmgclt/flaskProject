@@ -147,21 +147,19 @@ def api_products():
 def products():
     return render_template('products/list.html')    
 
-@app.route('/user/edit/password/<int:user_id>',methods = ['GET','POST'])
-def editPassword(user_id):
-    if request.method == 'POST':
-        id = user_id
-        objectone = UserModel()
-        inputPassword = escape (request.form['Password'])
-        password = hashlib.sha256( inputPassword.encode('utf-8')).hexdigest()
-        sql="UPDATE maindb.users_table SET password = %s WHERE user_id = %s"  
-        values=(password,user_id) 
-        newcursor.execute(sql,values)
-        condb.commit()
-        return redirect(url_for('users'))
+@app.route('/user/edit/password',methods = ['POST'])
+def editPassword():
+    if request.method == 'POST':   
+        password=request.form
+        print('password')
+        print('heloo')
+        
 
+        
 
-    return render_template("users/editUserdetail.html")
+       
+
+    return jsonify('o')
 @app.route('/billing',methods=['GET','POST'])
 def billing():
     return 0

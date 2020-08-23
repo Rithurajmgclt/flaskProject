@@ -39,15 +39,6 @@
     
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>  
-   <form action="{{ url_for('editPassword',user_id=form.user_id) }}">
-    <div class="form-group">
-      <label for="Password">Password</label>
-      <input type="password" value="{{form.password}}" min="5000" class="form-control" name="Password" placeholder="Enter password" aria-describedby="">
-  </div>
-  <div class="form-group">
-      <label for="Confirm Password">Confirm password</label>
-      <input type="password" min="5000" class="form-control"  placeholder="Re Enter password" aria-describedby="">
-  </div>                                                                                                                                                                               
-   </form>
+   
   {% endif %}
 {% endblock %} 
