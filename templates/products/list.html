@@ -1,9 +1,13 @@
-{% extends 'firsttview/layout.html' %}
+{% extends 'firstview/layout.html' %}
 {% block content %}
-<div id='ajax'>
-
-</div>
- 
+<div class="card" style="width: 18rem;">
+    <img class="card-img-top" src="..." alt="Card image cap">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+      <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+  </div>
    
 {% endblock %} 
 
@@ -15,9 +19,16 @@
     
          $.getJSON($SCRIPT_ROOT + '/api/products', {
           
-        }, function(data) {
-            console.log(data);
-            $('#ajax').text(JSON.stringify(data));
+        }, function(response) {
+            let data = '';
+          
+
+            $.each(response, function(key,value){
+                data += "<h1>"+ value.id + "</h1>";
+               
+            });
+            $('#continer').append(data);
+
         });
     });
   </script>

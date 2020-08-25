@@ -1,4 +1,6 @@
-from config.db import newcursor
+
+
+from config.db import newcursor,condb
 class UserModel():
     def emptySearch(self,current_page):
         sql="SELECT * FROM users_table ORDER BY user_id desc LIMIT %s,2"
@@ -31,4 +33,10 @@ class UserModel():
         userEditdetails = newcursor.fetchone()
         return userEditdetails
     
+    def edit_password(self,password,user_id):
+
+        sql="UPDATE maindb.users_table SET password = %s WHERE user_id = %s"  
+        values=(password,user_id) 
+        newcursor.execute(sql,values)
+        condb.commit()
     

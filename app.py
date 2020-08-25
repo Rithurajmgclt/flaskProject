@@ -111,8 +111,8 @@ def editUser(user_id):
         phonenumber = escape(request.form['PhoneNumber'])
         address = escape(request.form['Address'])
         userroles = escape(request.form['UserRoles'])
-        sql="UPDATE maindb.users_table SET firstname = %s,lastname = %s,age = %s, email = %s,phonenumber = %s,address = %s,userroles = %s,password = %s WHERE user_id = %s"  
-        values=(firstname,lastname,age,email,phonenumber,address,userroles,password,user_id) 
+        sql="UPDATE maindb.users_table SET firstname = %s,lastname = %s,age = %s, email = %s,phonenumber = %s,address = %s,userroles = %s WHERE user_id = %s"  
+        values=(firstname,lastname,age,email,phonenumber,address,userroles,user_id) 
         newcursor.execute(sql,values)
         condb.commit()
         return redirect(url_for('users'))
@@ -150,16 +150,13 @@ def products():
 @app.route('/user/edit/password',methods = ['POST'])
 def editPassword():
     if request.method == 'POST':   
-        password=request.form
-        print('password')
-        print('heloo')
-        
-
-        
-
-       
-
-    return jsonify('o')
+        edit_password = request.form["password"]
+        password = hashlib.sha256(edit_password.encode('utf-8')).hexdigest()
+        user_id = request.form["id"]
+        object_one = UserModel()
+        object_one.edit_password(password,user_id)
+        return jsonify("password changed")    
+    return jsonify("something went wrong")
 @app.route('/billing',methods=['GET','POST'])
 def billing():
     return 0
