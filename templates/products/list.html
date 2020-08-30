@@ -1,35 +1,94 @@
 {% extends 'firstview/layout.html' %}
 {% block content %}
-<div class="card" style="width: 18rem;">
-    <img class="card-img-top" src="..." alt="Card image cap">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-      <a href="#" class="btn btn-primary">Go somewhere</a>
-    </div>
+
+<div class="products">
+  
+  
   </div>
-   
+  
+<button id="load-more"  class="btn btn-primary" onclick="increase()" style="display: none;">load more</button>
+ 
+
 {% endblock %} 
-
-
 {% block scripts %}
 
+
 <script type="text/javascript">
-    $(function() {
-    
-         $.getJSON($SCRIPT_ROOT + '/api/products', {
-          
-        }, function(response) {
+ var a = 0;
+ function increase(){
+            a+=6;
+            console.log(a);
+            $.ajax({
+            method: "POST",
+            url: "/api/products",
+            data: { 'offset_limit':a
+                    }
+            })
+          .done(function(response) {
             let data = '';
-          
-
-            $.each(response, function(key,value){
-                data += "<h1>"+ value.id + "</h1>";
-               
-            });
-            $('#continer').append(data);
-
+        
+        let counter = 1;
+        $.each(response, function(key,value){
+          if (counter == 4){
+            counter = 1;
+          }
+          if (counter == 1){
+           data += `<div class="row product-row" >`;
+          }                        
+          data += `<div class="col-sm">
+            <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="static/uploads/products/${value.image}" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title">${value.product}</h5>
+          <p class="card-text">${value.details}</p>
+          <a href=http://127.0.0.1:5000/productdetails class="btn btn-primary">More details</a>
+        </div>
+      </div>
+                    </div>`;
+          if(counter == 3) {
+            data +=`</div>`;
+          } 
+          counter++;
         });
-    });
-  </script>
-  {% endblock %}
+  
+        
+          $('.products').append(data);
+        });
+
+      }
+    
+  $(function() { 
+       $.getJSON($SCRIPT_ROOT + '/api/products', {
+        
+      }, function(response) {
+          let data = '';
+        
+          let counter = 1;
+          $.each(response, function(key,value){
+            if (counter == 4){
+              counter = 1;
+            }
+            if (counter == 1){
+             data += `<div class="row product-row" >`;
+            }                        
+            data += `<div class="col-sm">
+              <div class="card" style="width: 18rem;">
+          <img class="card-img-top" src="static/uploads/products/${value.image}" alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title">${value.product}</h5>
+            <p class="card-text">${value.details}</p>
+            <a href=http://127.0.0.1:5000/productdetails class="btn btn-primary">More details</a>
+          </div>
+        </div>
+                      </div>`;
+            if(counter == 3) {
+              data +=`</div>`;
+            } 
+            counter++;
+          });
+           $('.products').append(data);
+           $('#load-more').show();
+      });
+  });
+</script>
+{% endblock %}

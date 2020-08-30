@@ -45,3 +45,20 @@ table {
     top: -100%;
     opacity: 0;
   }
+  .product-row {
+    margin-bottom: 15px;
+  }
+  .fontawesome-edit-colorchange {
+    color:rgb(10, 10, 10);
+    position:relative;
+   
+  }
+  .fontawesome-delete-colorchange {
+    color:rgb(10, 10, 10);
+    position:relative;
+    left: 5%;
+  }
+ .btn-password{
+  position: relative;
+  left:10%;
+ }

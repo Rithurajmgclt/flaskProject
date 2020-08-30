@@ -41,11 +41,9 @@
             <td>{{i.phonenumber}}</td>
             <td>{{i.address}}</td>
             <td>{{i.userroles}}</td>
-            <td> <a href="/user/edit/{{ i.user_id }}"><i class="fa fa-edit"></i></a> 
-                <a href='/user/delete/{{ i.user_id }}' onclick="return confirm('Are you sure you want to delete this item?');">delete</a> 
-                <button type="button" class="btnpasswd" data-toggle="modal" data-target="#exampleModal" data-id="{{i.user_id}}">
-                    change password
-                  </button></td>
+            <td> <a href='/user/edit/{{ i.user_id }}'><i class='fa fa-edit fa-1.5x fontawesome-edit-colorchange'></i></a> 
+                <a href='/user/delete/{{ i.user_id }}' onclick="return confirm('Are you sure you want to delete this item?');"><i class="fa fa-trash fa-1.5x fontawesome-delete-colorchange"></i></a> 
+                <button type='button' class='btn-password btn btn-dark' data-toggle='modal' data-target='#exampleModal' data-id='{{i.user_id}}'>change password</button></td>
         </tr>
         
         {% endfor %}
@@ -58,7 +56,7 @@
                 {% if current_page == n %}
                     <li class="page-item active"><a class="page-link" href="?search={{result_search}}&page={{n+1}}">{{n+1}}</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="?search={{result_search}}&page={{n+1}}">{{n+1}}</a></li>
+                    <li class="page-item "><a class="page-link" href="?search={{result_search}}&page={{n+1}}">{{n+1}}</a></li>
                 {% endif %}
             {% endfor %} 
     
@@ -93,7 +91,7 @@
         <div class="modal-footer">
           
          
-       
+          print( session["username"])
         </div>
       </div>
     </div>
@@ -103,7 +101,7 @@
 <script type="text/javascript">
  
 
-   $(".btnpasswd").click(function(e){
+   $(".btn-password").click(function(e){
      e.preventDefault();
     let id = $(this).data("id");
     $("#hidden-id").val(id);

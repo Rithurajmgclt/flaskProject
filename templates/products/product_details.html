@@ -1,0 +1,42 @@
+{% extends 'firstview/layout.html' %}
+{% block content %}
+<h1>product details</h1>
+<table>
+    <tr>
+        <th><id/th>
+        <th>Product</th>
+        <th>Prize</th>
+        <th>image</th>
+        <th>stock</th>
+        <th>created</th>
+        <th>details</th>
+
+    </tr>
+    {% for i in product_details %}
+    <tr>
+        <td>{{i.id}}</td>
+        <td>{{i.product}}</td>
+        <td>{{i.prize}}</td>
+        <td><img src="{{ url_for('static', filename='static/uploads/products/product1.jpeg') }}"></td>
+        <td>{{i.stock}}</td>
+        <td>{{i.created}}</td>
+        <td>{{i.details}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
