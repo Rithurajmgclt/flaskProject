@@ -6,7 +6,7 @@
   
   </div>
   
-<button id="load-more"  class="btn btn-primary" onclick="increase()" style="display: none;">load more</button>
+<button id="load-more"  class="btn btn-primary btn btn-dark" onclick="increase()" style="display: none;">load more</button>
  
 
 {% endblock %} 
@@ -41,7 +41,7 @@
         <div class="card-body">
           <h5 class="card-title">${value.product}</h5>
           <p class="card-text">${value.details}</p>
-          <a href=http://127.0.0.1:5000/productdetails class="btn btn-primary">More details</a>
+          <a href=http://127.0.0.1:5000/productdetails class="btn btn-primary btn btn-dark">More details</a>
         </div>
       </div>
                     </div>`;
@@ -49,6 +49,11 @@
             data +=`</div>`;
           } 
           counter++;
+          if (response.length < 6){
+              $('#load-more').hide();
+              console.log("hideme");
+
+            }
         });
   
         
@@ -61,6 +66,8 @@
        $.getJSON($SCRIPT_ROOT + '/api/products', {
         
       }, function(response) {
+        console.log(response.length)
+        
           let data = '';
         
           let counter = 1;
@@ -77,7 +84,7 @@
           <div class="card-body">
             <h5 class="card-title">${value.product}</h5>
             <p class="card-text">${value.details}</p>
-            <a href=http://127.0.0.1:5000/productdetails class="btn btn-primary">More details</a>
+            <a href=http://127.0.0.1:5000/productdetails class="btn btn-primary btn btn-dark">More details</a>
           </div>
         </div>
                       </div>`;
@@ -85,10 +92,17 @@
               data +=`</div>`;
             } 
             counter++;
+          
           });
            $('.products').append(data);
            $('#load-more').show();
+           if(response.length ==6 ){
+            console.log('hello');
+
+             }
+
       });
   });
+
 </script>
 {% endblock %}

@@ -62,3 +62,11 @@ table {
   position: relative;
   left:10%;
  }
+
+ .page-item.active .page-link {
+
+  
+  background-color: #343a40 !important;
+  border-color: #343a40 !important;
+
+}

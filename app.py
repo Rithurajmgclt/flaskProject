@@ -5,12 +5,20 @@ from models.userModel import UserModel
 
 from config.db import newcursor,condb
 import hashlib
+import math
 
 
 
 app= Flask(__name__)
 app.run(debug=True) 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+@app.route('/')
+def index():
+    if 'username' in session:
+        return redirect(url_for('dashboard'))
+    else:
+        return redirect(url_for('login'))    
 
 
 @app.route('/login',methods = ['GET','POST'])
@@ -49,28 +57,36 @@ def users():
     
 
         if request.args.get('page')!= None:
-            current_page= int(request.args.get('page'))-1
+            current_page = int(request.args.get('page'))
        
         else:
-            current_page=0
+            current_page=1
      
     
    
     # if search is none and empty this condition will execute
         if request.args.get("search") == None or not request.args.get('search') :
+
+            if request.args.get('page')!= None:
+                current_page = int(request.args.get('page'))
+            else:
+                current_page = 1
+         
+
+             
             object_one = UserModel()  
-            searchnone_emptyvalues = object_one.employee_search(current_page)  
+            searchnone_emptyvalues = object_one.users_with_pagination(current_page)  
             return render_template("users/index.html",users_list = searchnone_emptyvalues["users_list"],total_pages = searchnone_emptyvalues["total_pages"],current_page = current_page)   
         
         elif request.args.get("search") != None:
             if request.args.get('page')!= None:
-                current_page = int(request.args.get('page'))-1     
+                current_page = int(request.args.get('page'))     
             else:
-                current_page = 0
+                current_page = 1
             result_search = request.args.get('search')
-            object_one = User_model()
-            search_withvalues = object_one.user_pageination_withsearh(result_search, current_page)
-            return render_template("firstview/index.html",users_list = search_withvalues["users_list"],total_pages = search_withvalues["total_pages"],current_page = current_page,result_search = result_search) 
+            object_one = UserModel()
+            search_withvalues = object_one.users_pageination_withsearh(result_search, current_page)
+            return render_template("users/index.html",users_list = search_withvalues["users_list"],total_pages = search_withvalues["total_pages"],current_page = current_page,result_search = result_search) 
     else:
         return redirect(url_for('dashboard'))
 
@@ -78,9 +94,6 @@ def users():
 @app.route('/adddetails/',methods=['GET','POST'])
 def addDetails():
     if 'username' in session and session['userrole'] == "Manager":
-
-
-
         if request.method == 'POST':
             firstname = escape (request.form['FirstName'])
             lastname = escape(request.form['LastName'])
@@ -101,22 +114,16 @@ def addDetails():
             else:
                 None
             flash(message)        
-
-
             return redirect(url_for('users'))
         else:
-
             return render_template('users/add_user_details.html')
     else:
         return redirect(url_for('dashboard'))
        
 
-
 @app.route('/user/edit/<int:user_id>',methods = ['GET','POST'])
 def editUser(user_id):
-
     if 'username' in session and session['userrole'] == 'Manager':
-    
         if request.method == 'GET':
             id = user_id
             objectone = UserModel()
@@ -140,9 +147,7 @@ def editUser(user_id):
 
 @app.route('/user/delete/<int:user_id>')
 def delete_users(user_id):
-
     if 'username' in session and session['userrole'] == 'Manager':
-
         id=user_id
         sql = "DELETE FROM maindb.users_table WHERE user_id='%s'"
         values = (id,)
@@ -173,13 +178,12 @@ def api_products():
             offset_limit = int(request.form['offset_limit'])
             print(offset_limit)
             values = (offset_limit,)
-            sql="SELECT id,product,prize,details FROM maindb.products ORDER BY id ASC LIMIT %s,6"
+            sql="SELECT id,product,prize,image,details FROM maindb.products ORDER BY id ASC LIMIT %s,6"
             newcursor.execute(sql,values)
             product_details=newcursor.fetchall()
-            print(product_details)
             return jsonify(product_details)
 
-        sql="SELECT id,product,prize,details FROM maindb.products LIMIT 0,6"
+        sql="SELECT id,product,prize,image,details FROM maindb.products LIMIT 0,6"
         newcursor.execute(sql)
         product_details=newcursor.fetchall()
     
